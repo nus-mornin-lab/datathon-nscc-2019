@@ -1,0 +1,21 @@
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - pip
+  - jupyterlab
+  - pytorch
+  - torchvision
+  - tensorflow-gpu
+  - numpy
+  - scipy
+  - statsmodels
+  - scikit-learn
+  - pandas
+  - matplotlib
+  - seaborn
+  - nodejs
+  - pip:
+    - tableone
+    - xgboost
+    - fastai
