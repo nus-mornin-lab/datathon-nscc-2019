@@ -1,6 +1,6 @@
 channels:
+  - defaults
   - pytorch
-  - conda-forge
 dependencies:
   - pip
   - jupyterlab
@@ -15,7 +15,6 @@ dependencies:
   - pandas
   - matplotlib
   - seaborn
-  - nodejs
   - pip:
     - tableone
     - xgboost
