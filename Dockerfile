@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
@@ -33,7 +33,7 @@ RUN . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
 # install R and jupyter kernel for R
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
-    echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" > /etc/apt/sources.list.d/r.list && \
+    echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" >> /etc/apt/sources.list.d/r.list && \
     apt-get update && \
     apt-get install -y \
         libopenblas-dev \
@@ -50,10 +50,6 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
 # enable arbitrary user other than root to install packages
 RUN chmod a=u -R ${CONDA_PREFIX}
 
-ENV TINI_VERSION v0.18.0
-RUN wget --quiet https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini -O /tini && \
-    chmod +x /tini
-
 COPY docker-entrypoint.sh docker-cmd.sh /
-ENTRYPOINT ["/tini", "--", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/docker-cmd.sh"]

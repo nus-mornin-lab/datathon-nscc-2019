@@ -4,6 +4,7 @@ channels:
 dependencies:
   - pip
   - jupyterlab
+  - cudatoolkit==9.0
   - pytorch
   - torchvision
   - tensorflow-gpu
