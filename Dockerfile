@@ -20,16 +20,10 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}
     find ${CONDA_PREFIX} -follow -type f -name '*.a' -delete && \
     find ${CONDA_PREFIX} -follow -type f -name '*.js.map' -delete && \
     ${CONDA_PREFIX}/bin/conda clean -afy
-RUN --mount=type=cache,target=${CONDA_PREFIX}/pkgs \
-    ${CONDA_PREFIX}/bin/conda update -n base -c defaults conda && \
+RUN --mount=type=cache,id=conda,target=/opt/conda/pkgs \
     ${CONDA_PREFIX}/bin/conda update -n base --all
 
-# install python libraries
-COPY environment.yml environment.yml
-RUN --mount=type=cache,target=${CONDA_PREFIX}/pkgs \
-    . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
-    conda activate base && \
-    conda env update -f environment.yml
+# pin packages
 RUN . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda activate base && \
     conda config --system --add pinned_packages cudatoolkit=9.0 && \
@@ -39,6 +33,13 @@ RUN . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda config --env --add pinned_packages defaults::tensorflow-estimator && \
     conda config --env --add pinned_packages pytorch::pytorch && \
     conda config --env --add pinned_packages pytorch::torchvision
+
+# install python libraries
+COPY environment.yml environment.yml
+RUN --mount=type=cache,id=conda,target=/opt/conda/pkgs \
+    . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
+    conda activate base && \
+    conda env update -f environment.yml
 
 # install jupyter lab and ipywidgets (requires nodejs)
 ENV NODE_VERSION=node_11.x
@@ -70,7 +71,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     Rscript -e "install.packages('IRkernel'); IRkernel::installspec(prefix = '${CONDA_PREFIX}')"
 
 # enable arbitrary user other than root to install packages
-RUN chmod o=u -R ${CONDA_PREFIX}
+RUN chmod a=u -R ${CONDA_PREFIX}
 
 COPY docker-entrypoint.sh docker-cmd.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
