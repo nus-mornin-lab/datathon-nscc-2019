@@ -34,7 +34,7 @@ RUN . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda activate base && \
     conda config --system --add pinned_packages cudatoolkit=9.0 && \
     conda config --env --add pinned_packages defaults::tensorflow && \
-    conda config --env --add pinned_packages    defaults::tensorflow-base && \
+    conda config --env --add pinned_packages defaults::tensorflow-base && \
     conda config --env --add pinned_packages defaults::tensorflow-gpu && \
     conda config --env --add pinned_packages defaults::tensorflow-estimator && \
     conda config --env --add pinned_packages pytorch::pytorch && \
@@ -70,7 +70,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     Rscript -e "install.packages('IRkernel'); IRkernel::installspec(prefix = '${CONDA_PREFIX}')"
 
 # enable arbitrary user other than root to install packages
-RUN chmod a=u -R ${CONDA_PREFIX}
+RUN chmod o=u -R ${CONDA_PREFIX}
 
 COPY docker-entrypoint.sh docker-cmd.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
