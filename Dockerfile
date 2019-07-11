@@ -44,8 +44,8 @@ RUN . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
 ENV NODE_VERSION=node_11.x
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
     curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo "deb https://deb.nodesource.com/${NODE_VERSION} bionic main" >> /etc/apt/sources.list.d/nodesource.list && \
-    echo "deb-src https://deb.nodesource.com/${NODE_VERSION} bionic main" >> /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb https://deb.nodesource.com/${NODE_VERSION} xenial main" >> /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb-src https://deb.nodesource.com/${NODE_VERSION} xenial main" >> /etc/apt/sources.list.d/nodesource.list && \
     apt-get update && \
     apt-get install -y nodejs && \
     . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
