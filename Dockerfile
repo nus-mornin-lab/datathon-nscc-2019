@@ -69,10 +69,20 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
         libssl-dev
 COPY Makevars /root/.R/Makevars
 RUN --mount=type=cache,id=ccache,target=/root/.ccache \
+    --mount=type=bind,source=Rprofile,target=/Rprofile \
     . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda activate base && \
-    echo "MAKE=make -j$(( $(nproc) + 1 ))" >> /root/.Renviron && \
+    R_HOME=$(Rscript -e "cat(Sys.getenv('R_HOME'))") && \
+    cat /Rprofile >> ${R_HOME}/etc/Rprofile.site && \
+    echo "options(Ncpus = $(nproc))" >> ${R_HOME}/etc/Rprofile.site && \
     Rscript -e "install.packages('IRkernel'); IRkernel::installspec(prefix = '${CONDA_PREFIX}')"
+
+# install useful R packages
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
+    --mount=type=cache,id=ccache,target=/root/.ccache \
+    --mount=type=bind,source=r-packages.txt,target=/r-packages.txt \
+    apt-get install -y libcurl4-openssl-dev jags && \
+    Rscript -e "install.packages(trimws(readLines('/r-packages.txt')))"
 
 # enable arbitrary user other than root to install packages
 RUN chmod a=u -R ${CONDA_PREFIX}
