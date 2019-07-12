@@ -1,6 +1,7 @@
 channels:
   - defaults
   - pytorch
+  - fastai
 dependencies:
   - pip
   - jupyterlab
@@ -8,6 +9,7 @@ dependencies:
   - pytorch
   - torchvision
   - tensorflow-gpu
+  - keras
   - numpy
   - scipy
   - statsmodels
@@ -15,7 +17,10 @@ dependencies:
   - pandas
   - matplotlib
   - seaborn
+  - opencv
+  - pillow
+  - scikit-image
+  - py-xgboost-gpu
+  - fastai
   - pip:
     - tableone
-    - xgboost
-    - fastai
