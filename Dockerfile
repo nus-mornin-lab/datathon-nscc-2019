@@ -61,13 +61,17 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" >> /etc/apt/sources.list.d/r.list && \
     apt-get update && \
     apt-get install -y \
+        ccache \
         libopenblas-dev \
         r-base-dev \
         libxml2-dev \
         libssh2-1-dev \
-        libssl-dev && \
+        libssl-dev
+COPY Makevars /root/.R/Makevars
+RUN --mount=type=cache,id=ccache,target=/root/.ccache \
     . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda activate base && \
+    echo "MAKE=make -j$(( $(nproc) + 1 ))" >> /root/.Renviron && \
     Rscript -e "install.packages('IRkernel'); IRkernel::installspec(prefix = '${CONDA_PREFIX}')"
 
 # enable arbitrary user other than root to install packages
