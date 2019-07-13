@@ -6,8 +6,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
-    apt-get update && \
-    apt-get install --no-install-recommends -y curl wget
+    apt-get update && apt-get install --no-install-recommends -y curl wget
 
 # install miniconda
 ENV CONDA_PREFIX=/opt/conda CONDA_VERSION=4.6.14
@@ -47,8 +46,7 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     echo "deb https://deb.nodesource.com/${NODE_VERSION} xenial main" >> /etc/apt/sources.list.d/nodesource.list && \
     echo "deb-src https://deb.nodesource.com/${NODE_VERSION} xenial main" >> /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && \
-    apt-get install -y nodejs && \
+    apt-get update && apt-get install -y --no-install-recommends nodejs && \
     . ${CONDA_PREFIX}/etc/profile.d/conda.sh && \
     conda activate base && \
     jupyter lab clean && \
@@ -59,14 +57,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
     echo "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/" >> /etc/apt/sources.list.d/r.list && \
-    apt-get update && \
-    apt-get install -y \
-        ccache \
-        libopenblas-dev \
-        r-base-dev \
-        libxml2-dev \
-        libssh2-1-dev \
-        libssl-dev
+    apt-get update && apt-get install -y --no-install-recommends \
+        ccache libopenblas-dev r-base-dev r-recommended
 COPY Makevars /root/.R/Makevars
 RUN --mount=type=cache,id=ccache,target=/root/.ccache \
     --mount=type=bind,source=Rprofile,target=/Rprofile \
@@ -80,7 +72,8 @@ RUN --mount=type=cache,id=ccache,target=/root/.ccache \
 RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
     --mount=type=cache,id=ccache,target=/root/.ccache \
     --mount=type=bind,source=r-packages.txt,target=/r-packages.txt \
-    apt-get install -y libcurl4-openssl-dev jags && \
+    apt-get install -y --no-install-recommends \
+        libxml2-dev libssh2-1-dev libssl-dev libcurl4-openssl-dev jags && \
     Rscript -e "install.packages(trimws(readLines('/r-packages.txt')), Ncpus = $(nproc))"
 
 # enable arbitrary user other than root to install packages
