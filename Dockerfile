@@ -86,6 +86,10 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     apt-get update && apt-get install -y --no-install-recommends \
         git less vim emacs24-nox nano htop tmux screen jq cmake
 
+# set timzezone
+RUN ln -fs /usr/share/zoneinfo/Asia/Singapore /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+
 COPY docker-entrypoint.sh docker-cmd.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/docker-cmd.sh"]
