@@ -79,6 +79,13 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
 # enable arbitrary user other than root to install packages
 RUN chmod a=u -R ${CONDA_PREFIX}
 
+# install some useful tools
+RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/apt \
+    apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository -y ppa:git-core/ppa && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        git less vim emacs24-nox nano htop tmux screen jq cmake
+
 COPY docker-entrypoint.sh docker-cmd.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/docker-cmd.sh"]
